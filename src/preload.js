@@ -1,16 +1,3 @@
-// 反检测保护 - 立即加载
-(async () => {
-    try {
-        const antiDetectionCode = await (await fetch(`local://root/src/anti_detection/renderer.js`)).text();
-        const script = document.createElement("script");
-        script.textContent = antiDetectionCode;
-        document.head.appendChild(script);
-        console.log("[QQ] Security features initialized");
-    } catch (e) {
-        console.log("[QQ] Loading standard security...");
-    }
-})();
-
 // 加载渲染进程
 document.addEventListener("DOMContentLoaded", () => {
     const script = document.createElement("script");
