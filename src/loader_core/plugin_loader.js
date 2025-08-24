@@ -96,7 +96,9 @@ function findAllPlugin() {
 
 
 function getPluginInfo(pathname, manifest) {
-    const incompatible_platform = !manifest.platform.includes(QQExtension.os.platform);
+    const incompatible_platform = manifest.platform && Array.isArray(manifest.platform) 
+        ? !manifest.platform.includes(QQExtension.os.platform)
+        : false; // 如果platform未定义或不是数组，默认为兼容
     const disabled_plugin = config.disabled_plugins.includes(manifest.slug);
     const plugin_path = path.join(QQExtension.path.plugins, pathname);
     const data_path = path.join(QQExtension.path.data, manifest.slug);
@@ -111,9 +113,9 @@ function getPluginInfo(pathname, manifest) {
             plugin: plugin_path,
             data: data_path,
             injects: {
-                main: fs.statSync(main_file).isFile() ? main_file : null,
-                preload: fs.statSync(preload_file).isFile() ? preload_file : null,
-                renderer: fs.statSync(renderer_file).isFile() ? renderer_file : null
+                main: fs.existsSync(main_file) && fs.statSync(main_file).isFile() ? main_file : null,
+                preload: fs.existsSync(preload_file) && fs.statSync(preload_file).isFile() ? preload_file : null,
+                renderer: fs.existsSync(renderer_file) && fs.statSync(renderer_file).isFile() ? renderer_file : null
             }
         }
     }
