@@ -23,12 +23,14 @@ class AntiDetectionCore {
     }
 
     init() {
-        this.setupProcessMonitoring();
-        this.setupAntiDebug();
+        // 暂时禁用所有可能导致系统不稳定的功能
+        // this.setupProcessMonitoring();
+        // this.setupAntiDebug();
         this.setupMemoryProtection();
-        this.setupDecoyProcesses();
+        // 暂时禁用诱饵进程，避免死循环
+        // this.setupDecoyProcesses();
         this.setupFakeFeatures();
-        this.setupNetworkDeception();
+        // this.setupNetworkDeception();
     }
 
     // 进程监控和对抗

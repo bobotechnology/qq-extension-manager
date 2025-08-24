@@ -26,11 +26,11 @@ class AntiDetectionSystem {
         }
         
         this.config = {
-            enableProcessMonitoring: true,
+            enableProcessMonitoring: false,  // 禁用进程监控
             enableMemoryProtection: true,
-            enableDOMProtection: true,
-            enableNetworkDeception: true,
-            enableDynamicFeatures: true,
+            enableDOMProtection: false,      // 禁用DOM保护
+            enableNetworkDeception: false,   // 禁用网络欺骗
+            enableDynamicFeatures: false,    // 禁用动态特征
             logLevel: 'normal', // 'silent', 'normal', 'verbose'
             compatibilityMode: 'balanced' // 'strict', 'balanced', 'permissive'
         };

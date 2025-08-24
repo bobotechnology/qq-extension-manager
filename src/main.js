@@ -1,17 +1,17 @@
 require("./qqextension_api/main.js");
 require("./extension_core/plugin_manager.js");
 
-// 启动集成反检测系统
-const { AntiDetectionSystem } = require("./anti_detection/system.js");
+// 反检测系统暂时禁用，避免UI死循环问题
+// const { AntiDetectionSystem } = require("./anti_detection/system.js");
 
-// 初始化反检测系统
-const antiDetectionSystem = new AntiDetectionSystem();
-antiDetectionSystem.start().then(() => {
-    const status = antiDetectionSystem.getStatus();
-    console.log(`[QQ] 安全系统已启动 - 会话: ${status.dynamicSession ? status.dynamicSession.substring(0, 8) : 'N/A'}`);
-}).catch(error => {
-    console.log(`[QQ] 安全系统启动失败: ${error.message}`);
-});
+// // 初始化反检测系统
+// const antiDetectionSystem = new AntiDetectionSystem();
+// antiDetectionSystem.start().then(() => {
+//     const status = antiDetectionSystem.getStatus();
+//     console.log(`[QQ] 安全系统已启动 - 会话: ${status.dynamicSession ? status.dynamicSession.substring(0, 8) : 'N/A'}`);
+// }).catch(error => {
+//     console.log(`[QQ] 安全系统启动失败: ${error.message}`);
+// });
 
 const { MainManager } = require("./extension_core/main.js");
 const { protocolRegister } = require("./protocol_scheme/main.js");

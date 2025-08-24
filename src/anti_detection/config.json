@@ -1,37 +1,37 @@
 {
     "anti_detection": {
-        "enabled": true,
+        "enabled": false,
         "log_level": "normal",
         "features": {
-            "process_monitoring": true,
+            "process_monitoring": false,
             "memory_protection": true,
-            "dom_protection": true,
-            "network_deception": true,
-            "dynamic_features": true,
-            "file_system_protection": true
+            "dom_protection": false,
+            "network_deception": false,
+            "dynamic_features": false,
+            "file_system_protection": false
         },
         "security_levels": {
-            "threat_threshold_medium": 2,
-            "threat_threshold_high": 5,
-            "monitoring_interval": 5000,
-            "feature_update_interval": 1800000
+            "threat_threshold_medium": 5,
+            "threat_threshold_high": 10,
+            "monitoring_interval": 60000,
+            "feature_update_interval": 3600000
         },
         "deception": {
-            "fake_process_count": 2,
-            "fake_file_structure": true,
-            "fake_network_traffic": true,
-            "console_output_filtering": true
+            "fake_process_count": 0,
+            "fake_file_structure": false,
+            "fake_network_traffic": false,
+            "console_output_filtering": false
         },
         "advanced": {
-            "code_obfuscation": true,
+            "code_obfuscation": false,
             "memory_encryption": false,
-            "runtime_protection": true,
-            "anti_debug_traps": true
+            "runtime_protection": false,
+            "anti_debug_traps": false
         }
     },
     "compatibility": {
         "plugin_adapter_mode": "safe",
         "legacy_support": false,
-        "strict_isolation": true
+        "strict_isolation": false
     }
 }

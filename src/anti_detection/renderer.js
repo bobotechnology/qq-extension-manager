@@ -486,9 +486,9 @@ class RendererAntiDetection {
     }
 }
 
-// 立即激活渲染进程反检测
-if (typeof window !== 'undefined') {
-    window.rendererAntiDetection = new RendererAntiDetection();
-}
+// 暂时禁用渲染进程反检测，避免UI干扰
+// if (typeof window !== 'undefined') {
+//     window.rendererAntiDetection = new RendererAntiDetection();
+// }
 
 module.exports = { RendererAntiDetection };
