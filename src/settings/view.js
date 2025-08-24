@@ -249,8 +249,11 @@ async function initAbout(view) {
     const qqextensionofficial = view.querySelector(".about .qqextensionofficial");
     const github = view.querySelector(".about .github");
 
-    qqextensionofficial.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/bobotechnology/qq-extension-manager"));
-    github.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/bobotechnology"));
+    qqextensionofficial.addEventListener("click", () => {
+        // 暂无官网，不执行操作
+        console.log('暂无官网地址');
+    });
+    github.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/bobotechnology/qq-extension-manager"));
 
     // Hitokoto - 一言
     let visible = true;
