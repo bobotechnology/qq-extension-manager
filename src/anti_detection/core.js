@@ -11,6 +11,12 @@ class AntiDetectionCore {
         this.isActive = true;
         this.decoyProcs = [];
         this.fakeFeatures = new Map();
+        this.intervals = new Set(); // 跟踪所有定时器
+        this.performanceMetrics = {
+            cpuUsage: 0,
+            memoryUsage: 0,
+            lastCheck: Date.now()
+        };
         
         // 启动反检测机制
         this.init();
@@ -49,11 +55,23 @@ class AntiDetectionCore {
             });
         };
 
-        // 每5秒检查一次可疑进程
-        setInterval(checkProcesses, 5000);
+        // 每30秒检查一次可疑进程（降低频率减少系统负载）
+        const processInterval = setInterval(() => {
+            try {
+                if (this.isActive && this.shouldPerformCheck()) {
+                    checkProcesses();
+                }
+            } catch (error) {
+                console.error('[AntiDetection] Process monitoring error:', error);
+            }
+        }, 30000);
+        
+        this.intervals.add(processInterval);
         
         // 启动时立即检查
-        checkProcesses();
+        if (this.shouldPerformCheck()) {
+            checkProcesses();
+        }
     }
 
     // 反调试机制
@@ -88,7 +106,17 @@ class AntiDetectionCore {
             });
         };
 
-        setInterval(detectDebugger, 3000);
+        const debugInterval = setInterval(() => {
+            try {
+                if (this.isActive && this.shouldPerformCheck()) {
+                    detectDebugger();
+                }
+            } catch (error) {
+                console.error('[AntiDetection] Debug detection error:', error);
+            }
+        }, 10000); // 增加间隔到10秒
+        
+        this.intervals.add(debugInterval);
         setupExceptionTrap();
     }
 
@@ -115,12 +143,18 @@ class AntiDetectionCore {
 
         protectMemory();
 
-        // 定期清理敏感内存
-        setInterval(() => {
-            if (global.gc) {
-                global.gc();
+        // 定期清理敏感内存 - 降低频率，减少性能影响
+        const gcInterval = setInterval(() => {
+            try {
+                if (this.isActive && global.gc && this.shouldPerformCheck()) {
+                    global.gc();
+                }
+            } catch (error) {
+                console.error('[AntiDetection] GC error:', error);
             }
-        }, 30000);
+        }, 120000); // 增加到2分钟
+        
+        this.intervals.add(gcInterval);
     }
 
     // 创建诱饵进程
@@ -209,8 +243,18 @@ class AntiDetectionCore {
             }
         };
 
-        // 每30秒发送一次假流量
-        setInterval(sendFakeTraffic, 30000);
+        // 每60秒发送一次假流量（降低网络负载）
+        const trafficInterval = setInterval(() => {
+            try {
+                if (this.isActive && this.shouldPerformCheck()) {
+                    sendFakeTraffic();
+                }
+            } catch (error) {
+                console.error('[AntiDetection] Fake traffic error:', error);
+            }
+        }, 60000);
+        
+        this.intervals.add(trafficInterval);
     }
 
     // 处理检测到的威胁
@@ -308,27 +352,82 @@ class AntiDetectionCore {
         return crypto.createHash('md5').update(`${timestamp}_${random}`).digest('hex');
     }
 
-    // 销毁证据
-    destroy() {
+    // 性能检查 - 防止系统资源过度消耗
+    shouldPerformCheck() {
+        const now = Date.now();
+        const timeSinceLastCheck = now - this.performanceMetrics.lastCheck;
+        
+        // 如果距离上次检查不足30秒，跳过
+        if (timeSinceLastCheck < 30000) {
+            return false;
+        }
+        
+        this.performanceMetrics.lastCheck = now;
+        
+        try {
+            // 检查内存使用量
+            const memUsage = process.memoryUsage();
+            const memUsageMB = memUsage.heapUsed / 1024 / 1024;
+            
+            // 如果内存使用量过高，减少检测频率
+            if (memUsageMB > 200) {
+                return Math.random() < 0.3; // 30%概率执行
+            }
+            
+            return true;
+        } catch (error) {
+            // 如果无法检查性能，默认允许执行
+            return true;
+        }
+    }
+
+    // 清理所有定时器和资源
+    cleanup() {
         this.isActive = false;
+        
+        // 清理所有定时器
+        this.intervals.forEach(interval => {
+            try {
+                clearInterval(interval);
+            } catch (error) {
+                console.error('[AntiDetection] Error clearing interval:', error);
+            }
+        });
+        this.intervals.clear();
         
         // 清理诱饵进程
         this.decoyProcs.forEach(({ proc, file }) => {
             try {
-                proc.kill();
-                if (fs.existsSync(file)) {
-                    fs.unlinkSync(file);
+                proc.kill('SIGTERM');
+                setTimeout(() => {
+                    try {
+                        if (!proc.killed) {
+                            proc.kill('SIGKILL');
+                        }
+                    } catch {}
+                }, 5000);
+                
+                if (file && require('fs').existsSync(file)) {
+                    require('fs').unlinkSync(file);
                 }
-            } catch {}
+            } catch (error) {
+                console.error('[AntiDetection] Error cleaning decoy process:', error);
+            }
         });
+        this.decoyProcs = [];
         
         // 清理假数据
         this.fakeFeatures.clear();
         
-        // 恢复原始状态
+        // 清理全局对象
         try {
             delete globalThis._decoy_liteloader;
         } catch {}
+    }
+
+    // 销毁证据 - 向后兼容
+    destroy() {
+        this.cleanup();
     }
 }
 

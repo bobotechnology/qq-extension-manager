@@ -1,6 +1,7 @@
 // 反检测系统主集成模块
 const { AntiDetectionCore } = require('./core.js');
 const { DynamicFeatureGenerator } = require('./dynamic_features.js');
+const { PerformanceMonitor } = require('./performance_monitor.js');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
@@ -10,6 +11,11 @@ class AntiDetectionSystem {
         this.isActive = false;
         this.core = null;
         this.dynamicFeatures = null;
+        this.intervals = new Set(); // 跟踪所有定时器
+        this.resources = new Set(); // 跟踪所有资源
+        this.errorCount = 0;
+        this.maxErrors = 10; // 最大错误次数
+        this.performanceMonitor = null; // 性能监控器
         
         // 加载兼容性配置
         try {
@@ -35,6 +41,9 @@ class AntiDetectionSystem {
         
         // 初始化插件白名单
         this.initializePluginWhitelist();
+        
+        // 添加错误处理
+        this.setupErrorHandling();
     }
 
     // 初始化插件白名单
@@ -71,42 +80,90 @@ class AntiDetectionSystem {
                this.compatibilityConfig.compatibility_mode?.balanced;
     }
     async start() {
-        if (this.isActive) return;
+        if (this.isActive) {
+            this.log('安全系统已经启动', 'warn');
+            return;
+        }
         
         try {
             this.log('启动QQ扩展管理器安全系统...');
             
             // 1. 初始化动态特征生成器
             if (this.config.enableDynamicFeatures) {
-                this.dynamicFeatures = new DynamicFeatureGenerator();
-                await this.setupDynamicFeatures();
+                try {
+                    this.dynamicFeatures = new DynamicFeatureGenerator();
+                    await this.setupDynamicFeatures();
+                } catch (error) {
+                    this.log(`动态特征初始化失败: ${error.message}`, 'error');
+                    this.config.enableDynamicFeatures = false;
+                }
             }
             
             // 2. 启动核心反检测系统
-            this.core = new AntiDetectionCore();
+            try {
+                this.core = new AntiDetectionCore();
+                this.resources.add(this.core);
+            } catch (error) {
+                this.log(`核心系统初始化失败: ${error.message}`, 'error');
+                throw error;
+            }
             
             // 3. 设置系统级保护
-            this.setupSystemProtection();
+            try {
+                this.setupSystemProtection();
+            } catch (error) {
+                this.log(`系统保护设置失败: ${error.message}`, 'warn');
+            }
             
             // 4. 设置进程保护
-            this.setupProcessProtection();
+            try {
+                this.setupProcessProtection();
+            } catch (error) {
+                this.log(`进程保护设置失败: ${error.message}`, 'warn');
+            }
             
             // 5. 设置网络保护
             if (this.config.enableNetworkDeception) {
-                this.setupNetworkProtection();
+                try {
+                    this.setupNetworkProtection();
+                } catch (error) {
+                    this.log(`网络保护设置失败: ${error.message}`, 'warn');
+                    this.config.enableNetworkDeception = false;
+                }
             }
             
             // 6. 设置文件系统保护
-            this.setupFileSystemProtection();
+            try {
+                this.setupFileSystemProtection();
+            } catch (error) {
+                this.log(`文件系统保护设置失败: ${error.message}`, 'warn');
+            }
             
             // 7. 启动监控循环
-            this.startMonitoring();
+            try {
+                this.startMonitoring();
+            } catch (error) {
+                this.log(`监控系统启动失败: ${error.message}`, 'warn');
+            }
+            
+            // 8. 启动性能监控
+            try {
+                this.performanceMonitor = new PerformanceMonitor();
+                this.setupPerformanceMonitoring();
+                this.performanceMonitor.start();
+                this.resources.add(this.performanceMonitor);
+            } catch (error) {
+                this.log(`性能监控启动失败: ${error.message}`, 'warn');
+            }
             
             this.isActive = true;
             this.log('安全系统启动完成');
             
         } catch (error) {
             this.log(`安全系统启动失败: ${error.message}`, 'error');
+            // 如果启动失败，清理已创建的资源
+            this.cleanup();
+            throw error;
         }
     }
 
@@ -272,6 +329,57 @@ class AntiDetectionSystem {
         return authorizedPaths.some(path => stack.includes(path));
     }
 
+    // 设置性能监控
+    setupPerformanceMonitoring() {
+        if (!this.performanceMonitor) return;
+        
+        // 添加警告回调
+        this.performanceMonitor.addWarningCallback((type, value, metrics) => {
+            this.handlePerformanceWarning(type, value, metrics);
+        });
+        
+        this.log('性能监控已设置');
+    }
+    
+    // 处理性能警告
+    handlePerformanceWarning(type, value, metrics) {
+        this.log(`性能警告 [${type}]: ${value}`, 'warn');
+        
+        // 根据警告类型调整系统行为
+        switch (type) {
+            case 'high_memory':
+                this.enterLowResourceMode();
+                break;
+            case 'too_many_processes':
+                this.reduceProcessCount();
+                break;
+        }
+    }
+    
+    // 进入低资源模式
+    enterLowResourceMode() {
+        this.log('进入低资源模式', 'warn');
+        
+        // 禁用非关键功能
+        this.config.enableNetworkDeception = false;
+        this.config.enableDynamicFeatures = false;
+        
+        // 降低监控频率
+        if (this.core) {
+            this.core.enterLowResourceMode && this.core.enterLowResourceMode();
+        }
+    }
+    
+    // 减少进程数量
+    reduceProcessCount() {
+        this.log('正在减少进程数量...', 'warn');
+        
+        // 清理非必要的诱饵进程
+        if (this.core) {
+            this.core.cleanupDecoyProcesses && this.core.cleanupDecoyProcesses();
+        }
+    }
+
     // 启动监控循环
     startMonitoring() {
         const monitoringInterval = 5000; // 5秒
@@ -400,29 +508,78 @@ class AntiDetectionSystem {
         this.stop();
     }
 
-    // 停止反检测系统
-    stop() {
-        if (!this.isActive) return;
-        
-        this.log('正在停止安全系统...');
-        
+    // 清理所有资源
+    cleanup() {
         try {
+            // 清理所有定时器
+            this.intervals.forEach(interval => {
+                try {
+                    clearInterval(interval);
+                } catch (error) {
+                    this.log(`清理定时器错误: ${error.message}`, 'error');
+                }
+            });
+            this.intervals.clear();
+            
+            // 清理所有资源
+            this.resources.forEach(resource => {
+                try {
+                    if (resource && typeof resource.cleanup === 'function') {
+                        resource.cleanup();
+                    } else if (resource && typeof resource.destroy === 'function') {
+                        resource.destroy();
+                    }
+                } catch (error) {
+                    this.log(`清理资源错误: ${error.message}`, 'error');
+                }
+            });
+            this.resources.clear();
+            
             // 清理核心系统
             if (this.core) {
-                this.core.destroy();
+                try {
+                    this.core.cleanup();
+                } catch (error) {
+                    this.log(`清理核心系统错误: ${error.message}`, 'error');
+                }
+                this.core = null;
             }
             
             // 清理动态特征
             if (this.dynamicFeatures) {
-                this.dynamicFeatures.cleanup();
+                try {
+                    this.dynamicFeatures.cleanup();
+                } catch (error) {
+                    this.log(`清理动态特征错误: ${error.message}`, 'error');
+                }
+                this.dynamicFeatures = null;
             }
             
             // 清理威胁记录
             this.threats.clear();
             
-            this.isActive = false;
-            this.log('安全系统已停止');
+            // 重置错误计数
+            this.errorCount = 0;
             
+            this.isActive = false;
+            
+        } catch (error) {
+            console.error(`[AntiDetectionSystem] 清理资源时出错: ${error.message}`);
+        }
+    }
+
+    // 停止反检测系统 - 改进版
+    stop() {
+        if (!this.isActive) {
+            this.log('安全系统已经停止', 'warn');
+            return;
+        }
+        
+        this.log('正在停止安全系统...');
+        
+        try {
+            this.cleanup();
+            this.log('安全系统已停止');
         } catch (error) {
             this.log(`停止安全系统时出错: ${error.message}`, 'error');
         }

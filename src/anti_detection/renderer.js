@@ -4,19 +4,26 @@ class RendererAntiDetection {
         this.isActive = true;
         this.originalMethods = new Map();
         this.fakeElements = new Set();
+        this.observers = new Set(); // 跟踪所有观察者
+        this.intervals = new Set(); // 跟踪所有定时器
+        this.performanceThrottle = new Map(); // 性能节流
         this.init();
     }
 
     init() {
-        this.setupDOMProtection();
-        this.setupConsoleProtection();
-        this.setupDevToolsDetection();
-        this.setupElementHiding();
-        this.setupEventListenerProtection();
-        this.setupNetworkHooks();
+        try {
+            this.setupDOMProtection();
+            this.setupConsoleProtection();
+            this.setupDevToolsDetection();
+            this.setupElementHiding();
+            this.setupEventListenerProtection();
+            this.setupNetworkHooks();
+        } catch (error) {
+            console.error('[RendererAntiDetection] Initialization error:', error);
+        }
     }
 
-    // DOM保护
+    // DOM保护 - 优化性能，减少对正常操作的干扰
     setupDOMProtection() {
         // 劫持querySelector相关方法
         const originalQuerySelector = Document.prototype.querySelector;
@@ -27,56 +34,66 @@ class RendererAntiDetection {
         this.originalMethods.set('querySelectorAll', originalQuerySelectorAll);
         this.originalMethods.set('getElementById', originalGetElementById);
 
-        // 过滤敏感查询
+        // 过滤敏感查询 - 只过滤真正敏感的内容
         const sensitiveSelectors = [
             'liteloader', 'LiteLoader'
-            // 注意：不包含qqextension，保证插件兼容性
+            // 注意：保持qqextension，确保插件兼容性
         ];
         
         // 白名单：允许插件正常访问的路径
         const pluginWhitelist = [
-            'qqextension_api', 'extension_core', '/plugins/', 'plugin.js'
+            'qqextension_api', 'extension_core', '/plugins/', 'plugin.js',
+            'qq-extension-manager' // 添加项目本身
         ];
 
+        // 缓存检查结果避免重复计算
+        const selectorCache = new Map();
+        const stackCache = new Map();
+
+        const isPluginCall = (stack) => {
+            if (stackCache.has(stack)) {
+                return stackCache.get(stack);
+            }
+            const result = pluginWhitelist.some(path => stack.includes(path));
+            stackCache.set(stack, result);
+            return result;
+        };
+
+        const isSensitiveSelector = (selector) => {
+            if (selectorCache.has(selector)) {
+                return selectorCache.get(selector);
+            }
+            const result = sensitiveSelectors.some(sensitive => 
+                selector.toLowerCase().includes(sensitive.toLowerCase())
+            );
+            selectorCache.set(selector, result);
+            return result;
+        };
+
         Document.prototype.querySelector = function(selector) {
-            if (typeof selector === 'string') {
-                // 检查是否为插件调用
+            if (typeof selector === 'string' && isSensitiveSelector(selector)) {
                 const stack = new Error().stack;
-                const isPluginCall = pluginWhitelist.some(path => stack.includes(path));
-                
-                if (!isPluginCall) {
-                    for (const sensitive of sensitiveSelectors) {
-                        if (selector.toLowerCase().includes(sensitive.toLowerCase())) {
-                            return null; // 只对外部查询隐藏敏感元素
-                        }
-                    }
+                if (!isPluginCall(stack)) {
+                    return null; // 只对外部查询隐藏敏感元素
                 }
             }
             return originalQuerySelector.call(this, selector);
         };
 
         Document.prototype.querySelectorAll = function(selector) {
-            if (typeof selector === 'string') {
+            if (typeof selector === 'string' && isSensitiveSelector(selector)) {
                 const stack = new Error().stack;
-                const isPluginCall = pluginWhitelist.some(path => stack.includes(path));
-                
-                if (!isPluginCall) {
-                    for (const sensitive of sensitiveSelectors) {
-                        if (selector.toLowerCase().includes(sensitive.toLowerCase())) {
-                            return document.createNodeList ? document.createNodeList() : [];
-                        }
-                    }
+                if (!isPluginCall(stack)) {
+                    return document.createNodeList ? document.createNodeList() : [];
                 }
             }
             return originalQuerySelectorAll.call(this, selector);
         };
 
         Document.prototype.getElementById = function(id) {
-            if (typeof id === 'string') {
+            if (typeof id === 'string' && id.toLowerCase().includes('liteloader')) {
                 const stack = new Error().stack;
-                const isPluginCall = pluginWhitelist.some(path => stack.includes(path));
-                
-                if (!isPluginCall && id.toLowerCase().includes('liteloader')) {
+                if (!isPluginCall(stack)) {
                     return null;
                 }
             }
@@ -84,21 +101,28 @@ class RendererAntiDetection {
         };
     }
 
-    // 控制台保护
+    // 控制台保护 - 优化性能
     setupConsoleProtection() {
         const originalConsole = { ...console };
         this.originalMethods.set('console', originalConsole);
 
-        // 过滤敏感日志输出
-        const filterSensitiveLog = (method, args) => {
-            const str = args.join(' ').toLowerCase();
-            const sensitiveKeywords = [
-                'liteloader', 'qqextension', 'extension_core', 'qqextension_api'
-            ];
+        // 过滤敏感日志输出 - 优化性能
+        const sensitiveKeywords = [
+            'liteloader', // 保持原有逻辑，但不过滤qqextension
+        ];
+        
+        const keywordRegex = new RegExp(sensitiveKeywords.join('|'), 'i'); // 预编译正则
 
-            if (sensitiveKeywords.some(keyword => str.includes(keyword))) {
-                // 替换为无害的日志
-                args = ['[QQ] Normal operation'];
+        const filterSensitiveLog = (method, args) => {
+            try {
+                const str = args.join(' ');
+                if (keywordRegex.test(str)) {
+                    // 替换为无害的日志
+                    return ['[QQ] Normal operation'];
+                }
+            } catch (error) {
+                // 如果过滤失败，返回原参数
+                return args;
             }
             return args;
         };
@@ -111,7 +135,7 @@ class RendererAntiDetection {
         });
     }
 
-    // 开发者工具检测
+    // 开发者工具检测 - 优化性能，减少检测频率
     setupDevToolsDetection() {
         let devtools = {
             open: false,
@@ -119,25 +143,43 @@ class RendererAntiDetection {
         };
 
         const threshold = 160;
+        let lastCheckTime = 0;
+        const checkInterval = 2000; // 增加检测间隔到2秒
 
-        setInterval(() => {
-            if (window.outerHeight - window.innerHeight > threshold || 
-                window.outerWidth - window.innerWidth > threshold) {
-                if (!devtools.open) {
+        const checkDevTools = () => {
+            const now = Date.now();
+            if (now - lastCheckTime < checkInterval) {
+                return; // 限制检测频率
+            }
+            lastCheckTime = now;
+
+            try {
+                const isOpen = window.outerHeight - window.innerHeight > threshold || 
+                             window.outerWidth - window.innerWidth > threshold;
+                
+                if (isOpen && !devtools.open) {
                     devtools.open = true;
                     this.handleDevToolsOpen();
+                } else if (!isOpen) {
+                    devtools.open = false;
                 }
-            } else {
-                devtools.open = false;
+            } catch (error) {
+                // 忽略检测错误
             }
-        }, 500);
+        };
 
-        // 检测控制台命令
+        const devToolsInterval = setInterval(checkDevTools, checkInterval);
+        this.intervals.add(devToolsInterval);
+
+        // 检测控制台命令 - 限制日志数量
         let logs = [];
+        const maxLogs = 5; // 减少日志数量
         const originalLog = console.log;
         console.log = function(...args) {
+            if (logs.length >= maxLogs) {
+                logs.shift();
+            }
             logs.push(args.join(' '));
-            if (logs.length > 10) logs.shift();
             originalLog.apply(console, args);
         };
     }
@@ -156,55 +198,81 @@ class RendererAntiDetection {
         this.activateInterference();
     }
 
-    // 元素隐藏
+    // 元素隐藏 - 优化性能，减少DOM操作开销
     setupElementHiding() {
         // 创建MutationObserver来监视DOM变化
         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            this.processNewElement(node);
+            try {
+                // 使用requestIdleCallback或setTimeout优化性能
+                const processMutations = () => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList' && this.isActive) {
+                            mutation.addedNodes.forEach((node) => {
+                                if (node.nodeType === Node.ELEMENT_NODE) {
+                                    this.processNewElement(node);
+                                }
+                            });
                         }
                     });
+                };
+                
+                // 使用非阻塞式处理
+                if (window.requestIdleCallback) {
+                    window.requestIdleCallback(processMutations, { timeout: 100 });
+                } else {
+                    setTimeout(processMutations, 0);
                 }
-            });
+            } catch (error) {
+                console.error('[RendererAntiDetection] Observer error:', error);
+            }
         });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+        try {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                // 优化：只监视必要的属性
+                attributes: false,
+                characterData: false
+            });
+            
+            this.observers.add(observer);
+        } catch (error) {
+            console.error('[RendererAntiDetection] Observer setup error:', error);
+        }
     }
 
-    // 处理新元素
+    // 处理新元素 - 优化性能
     processNewElement(element) {
-        // 检查是否包含敏感属性或内容
-        const sensitivePatterns = [
-            /liteloader/i, /qqextension/i, /extension[_-]core/i
-        ];
+        try {
+            // 检查是否包含敏感属性或内容 - 只过滤liteloader
+            const sensitivePatterns = [
+                /liteloader/i // 保持qqextension正常工作
+            ];
 
-        const checkElement = (el) => {
-            // 检查类名、ID、属性
-            const className = el.className || '';
-            const id = el.id || '';
-            const innerHTML = el.innerHTML || '';
-
-            for (const pattern of sensitivePatterns) {
-                if (pattern.test(className) || pattern.test(id) || pattern.test(innerHTML)) {
-                    // 隐藏或修改敏感元素
-                    this.disguiseElement(el);
-                    break;
+            const checkElement = (el) => {
+                // 检查类名、ID、属性 - 优化性能
+                const className = el.className || '';
+                const id = el.id || '';
+                
+                for (const pattern of sensitivePatterns) {
+                    if (pattern.test(className) || pattern.test(id)) {
+                        // 隐藏或修改敏感元素
+                        this.disguiseElement(el);
+                        return; // 找到后直接返回，减少不必要的检查
+                    }
                 }
-            }
 
-            // 递归检查子元素
-            if (el.children) {
-                Array.from(el.children).forEach(checkElement);
-            }
-        };
+                // 仅在必要时递归检查子元素
+                if (el.children && el.children.length > 0 && el.children.length < 50) {
+                    Array.from(el.children).forEach(checkElement);
+                }
+            };
 
-        checkElement(element);
+            checkElement(element);
+        } catch (error) {
+            // 忽略处理错误，防止影响正常功能
+        }
     }
 
     // 伪装元素
@@ -364,9 +432,29 @@ class RendererAntiDetection {
         }
     }
 
-    // 销毁反检测机制
-    destroy() {
+    // 清理所有资源和定时器
+    cleanup() {
         this.isActive = false;
+        
+        // 清理所有定时器
+        this.intervals.forEach(interval => {
+            try {
+                clearInterval(interval);
+            } catch (error) {
+                console.error('[RendererAntiDetection] Error clearing interval:', error);
+            }
+        });
+        this.intervals.clear();
+        
+        // 清理所有观察者
+        this.observers.forEach(observer => {
+            try {
+                observer.disconnect();
+            } catch (error) {
+                console.error('[RendererAntiDetection] Error disconnecting observer:', error);
+            }
+        });
+        this.observers.clear();
         
         // 恢复原始方法
         this.originalMethods.forEach((originalMethod, key) => {
@@ -380,13 +468,21 @@ class RendererAntiDetection {
                 } else if (key === 'getElementById') {
                     Document.prototype.getElementById = originalMethod;
                 }
-            } catch (e) {
-                // 忽略恢复失败
+            } catch (error) {
+                console.error('[RendererAntiDetection] Error restoring method:', error);
             }
         });
-
-        // 清理假元素
+        
+        // 清理假元素引用
         this.fakeElements.clear();
+        
+        // 清理性能节流缓存
+        this.performanceThrottle.clear();
+    }
+
+    // 销毁反检测机制 - 向后兼容
+    destroy() {
+        this.cleanup();
     }
 }
 
