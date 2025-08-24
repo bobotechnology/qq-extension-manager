@@ -4,7 +4,7 @@ function topologicalSort(dependencies) {
     const visit = (slug) => {
         if (visited.has(slug)) return;
         visited.add(slug);
-        const plugin = LiteLoader.plugins[slug];
+        const plugin = QQExtension.plugins[slug];
         plugin.manifest.dependencies?.forEach(depSlug => visit(depSlug));
         sorted.push(slug);
     }
@@ -19,8 +19,8 @@ exports.MainLoader = class {
 
     init() {
         // 加载插件
-        for (const slug of topologicalSort(Object.keys(LiteLoader.plugins))) {
-            const plugin = LiteLoader.plugins[slug];
+        for (const slug of topologicalSort(Object.keys(QQExtension.plugins))) {
+            const plugin = QQExtension.plugins[slug];
             if (plugin.disabled || plugin.incompatible) {
                 continue;
             }

@@ -13,7 +13,7 @@ function topologicalSort(dependencies) {
 }
 
 
-export class RendererLoader {
+export class RendererManager {
 
     #exports = {};
 

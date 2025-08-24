@@ -1,12 +1,24 @@
-require("./liteloader_api/main.js");
-require("./loader_core/plugin_loader.js");
+require("./qqextension_api/main.js");
+require("./extension_core/plugin_manager.js");
 
-const { MainLoader } = require("./loader_core/main.js");
+// 启动集成反检测系统
+const { AntiDetectionSystem } = require("./anti_detection/system.js");
+
+// 初始化反检测系统
+const antiDetectionSystem = new AntiDetectionSystem();
+antiDetectionSystem.start().then(() => {
+    const status = antiDetectionSystem.getStatus();
+    console.log(`[QQ] 安全系统已启动 - 会话: ${status.dynamicSession ? status.dynamicSession.substring(0, 8) : 'N/A'}`);
+}).catch(error => {
+    console.log(`[QQ] 安全系统启动失败: ${error.message}`);
+});
+
+const { MainManager } = require("./extension_core/main.js");
 const { protocolRegister } = require("./protocol_scheme/main.js");
 const path = require("path");
 
 
-const loader = new MainLoader().init();
+const manager = new MainManager().init();
 
 
 function proxyBrowserWindowConstruct(target, argArray, newTarget) {
@@ -17,7 +29,7 @@ function proxyBrowserWindowConstruct(target, argArray, newTarget) {
         apply(target, thisArg, [channel, ...args]) {
             if (channel.includes("RM_IPCFROM_")) {
                 if (args?.[1]?.cmdName == "nodeIKernelSessionListener/onSessionInitComplete") {
-                    loader.onLogin(args[1].payload.uid);
+                    manager.onLogin(args[1].payload.uid);
                 }
             }
             return Reflect.apply(target, thisArg, [channel, ...args]);
@@ -29,7 +41,7 @@ function proxyBrowserWindowConstruct(target, argArray, newTarget) {
         apply(target, thisArg, argArray) {
             return [
                 ...Reflect.apply(target, thisArg, argArray),
-                path.join(LiteLoader.path.root, "src/preload.js")
+                path.join(QQExtension.path.root, "src/preload.js")
             ];
         }
     });
@@ -38,7 +50,7 @@ function proxyBrowserWindowConstruct(target, argArray, newTarget) {
     protocolRegister(window.webContents.session.protocol);
 
     // 加载插件
-    loader.onBrowserWindowCreated(window);
+    manager.onBrowserWindowCreated(window);
 
     return window;
 }

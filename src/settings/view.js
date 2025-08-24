@@ -37,37 +37,37 @@ async function initVersions(view) {
         view.querySelector(".versions .qwqnt").style.display = "block";
     }
 
-    const liteloader = view.querySelectorAll(".versions .current .liteloader setting-text");
+    const qqextension = view.querySelectorAll(".versions .current .qqextension setting-text");
     const qqnt = view.querySelectorAll(".versions .current .qqnt setting-text");
     const electron = view.querySelectorAll(".versions .current .electron setting-text");
     const chromium = view.querySelectorAll(".versions .current .chromium setting-text");
     const nodejs = view.querySelectorAll(".versions .current .nodejs setting-text");
 
-    liteloader[1].textContent = LiteLoader.versions.liteloader;
-    qqnt[1].textContent = LiteLoader.versions.qqnt;
-    electron[1].textContent = LiteLoader.versions.electron;
-    chromium[1].textContent = LiteLoader.versions.chrome;
-    nodejs[1].textContent = LiteLoader.versions.node;
+    qqextension[1].textContent = QQExtension.versions.qqextension;
+    qqnt[1].textContent = QQExtension.versions.qqnt;
+    electron[1].textContent = QQExtension.versions.electron;
+    chromium[1].textContent = QQExtension.versions.chrome;
+    nodejs[1].textContent = QQExtension.versions.node;
 
     const title = view.querySelector(".versions .new setting-text");
     const update_btn = view.querySelector(".versions .new setting-button");
 
-    const jump_link = () => LiteLoader.api.openExternal(update_btn.value);
+    const jump_link = () => QQExtension.api.openExternal(update_btn.value);
     const try_again = () => {
         // 初始化 显示
-        title.textContent = "正在瞅一眼 LiteLoaderQQNT 是否有新版本";
+        title.textContent = "正在瞅一眼 QQExtension 是否有新版本";
         update_btn.textContent = "你先别急";
         update_btn.value = null;
         update_btn.removeEventListener("click", jump_link);
         update_btn.removeEventListener("click", try_again);
         // 检测是否有新版
-        const repo_url = LiteLoader.package.liteloader.repository.url;
+        const repo_url = QQExtension.package.qqextension.repository.url;
         const release_latest_url = `${repo_url.slice(0, repo_url.lastIndexOf(".git"))}/releases/latest`;
         fetch(release_latest_url).then((res) => {
             const new_version = res.url.slice(res.url.lastIndexOf("/") + 1);
             // 有新版
-            if (compareVersions(LiteLoader.versions.liteloader, new_version)) {
-                title.textContent = `发现 LiteLoaderQQNT 新版本 ${new_version}`;
+            if (compareVersions(QQExtension.versions.qqextension, new_version)) {
+                title.textContent = `发现 QQExtension 新版本 ${new_version}`;
                 update_btn.textContent = "去瞅一眼";
                 update_btn.value = res.url;
                 update_btn.removeEventListener("click", try_again);
@@ -75,7 +75,7 @@ async function initVersions(view) {
             }
             // 没新版
             else {
-                title.textContent = "暂未发现 LiteLoaderQQNT 有新版本，目前已是最新";
+                title.textContent = "暂未发现 QQExtension 有新版本，目前已是最新";
                 update_btn.textContent = "重新发现";
                 update_btn.value = null;
                 update_btn.removeEventListener("click", jump_link);
@@ -97,7 +97,7 @@ async function initVersions(view) {
 async function initPluginList(view) {
     const plugin_item_template = view.querySelector("#plugin-item");
     const plugin_install_button = view.querySelector(".plugins .plugin .install setting-button");
-    const plugin_loader_switch = view.querySelector(".plugins .plugin .loader setting-switch");
+    const plugin_manager_switch = view.querySelector(".plugins .plugin .manager setting-switch");
     const plugin_lists = {
         extension: view.querySelector(".plugins .extension"),
         theme: view.querySelector(".plugins .theme"),
@@ -109,21 +109,21 @@ async function initPluginList(view) {
     input_file.accept = ".zip,.json";
     input_file.addEventListener("change", async () => {
         const filepath = input_file.files?.[0]?.path;
-        const config = await LiteLoader.api.config.get("LiteLoader", default_config);
+        const config = await QQExtension.api.config.get("QQExtension", default_config);
         const has_install = Object.values(config.installing_plugins).some(item => item.plugin_path == filepath);
-        const is_install = await LiteLoader.api.plugin.install(filepath, has_install);
+        const is_install = await QQExtension.api.plugin.install(filepath, has_install);
         alert(is_install ? (has_install ? "已取消安装此插件" : "将在下次启动时安装") : "无法安装无效插件");
         input_file.value = null;
     });
     plugin_install_button.addEventListener("click", () => input_file.click());
 
-    const config = await LiteLoader.api.config.get("LiteLoader", default_config);
-    plugin_loader_switch.setActive(config.enable_plugins);
-    plugin_loader_switch.addEventListener("click", () => {
-        const isActive = plugin_loader_switch.getActive();
-        plugin_loader_switch.setActive(!isActive);
+    const config = await QQExtension.api.config.get("QQExtension", default_config);
+    plugin_manager_switch.setActive(config.enable_plugins);
+    plugin_manager_switch.addEventListener("click", () => {
+        const isActive = plugin_manager_switch.getActive();
+        plugin_manager_switch.setActive(!isActive);
         config.enable_plugins = !isActive;
-        LiteLoader.api.config.set("LiteLoader", config);
+        QQExtension.api.config.set("QQExtension", config);
     });
 
     const plugin_counts = {
@@ -132,7 +132,7 @@ async function initPluginList(view) {
         framework: 0
     }
 
-    for (const [slug, plugin] of Object.entries(LiteLoader.plugins)) {
+    for (const [slug, plugin] of Object.entries(QQExtension.plugins)) {
         // 跳过不兼容插件
         if (plugin.incompatible) {
             continue;
@@ -196,7 +196,7 @@ async function initPluginList(view) {
             const isActive = manager_modal_enable.getActive();
             manager_modal_enable.setActive(!isActive);
             plugin_item.classList.toggle("disabled", isActive);
-            LiteLoader.api.plugin.disable(slug, !isActive);
+            QQExtension.api.plugin.disable(slug, !isActive);
         });
         plugin_item.classList.toggle("disabled", !manager_modal_enable.getActive());
 
@@ -205,8 +205,8 @@ async function initPluginList(view) {
             const isActive = manager_modal_keepdata.getActive();
             manager_modal_keepdata.setActive(!isActive);
             plugin_item.classList.toggle("deleted", !isActive);
-            const config = await LiteLoader.api.config.get("LiteLoader", default_config);
-            if (slug in config.deleting_plugins) LiteLoader.api.plugin.delete(slug, !isActive, false);
+            const config = await QQExtension.api.config.get("QQExtension", default_config);
+            if (slug in config.deleting_plugins) QQExtension.api.plugin.delete(slug, !isActive, false);
         });
         plugin_item.classList.toggle("deleted", manager_modal_keepdata.getActive());
 
@@ -216,7 +216,7 @@ async function initPluginList(view) {
             manager_modal_uninstall.setActive(!isActive);
             plugin_item.classList.toggle("deleted", !isActive);
             const keepdata = manager_modal_keepdata.getActive();
-            LiteLoader.api.plugin.delete(slug, keepdata, isActive);
+            QQExtension.api.plugin.delete(slug, keepdata, isActive);
         });
         plugin_item.classList.toggle("deleted", manager_modal_uninstall.getActive());
 
@@ -238,23 +238,23 @@ async function initPath(view) {
     const profile_path_content = view.querySelectorAll(".path .profile setting-text")[2];
     const profile_path_button = view.querySelector(".path .profile setting-button");
 
-    root_path_content.textContent = LiteLoader.path.root;
-    root_path_button.addEventListener("click", () => LiteLoader.api.openPath(LiteLoader.path.root));
-    profile_path_content.textContent = LiteLoader.path.profile;
-    profile_path_button.addEventListener("click", () => LiteLoader.api.openPath(LiteLoader.path.profile));
+    root_path_content.textContent = QQExtension.path.root;
+    root_path_button.addEventListener("click", () => QQExtension.api.openPath(QQExtension.path.root));
+    profile_path_content.textContent = QQExtension.path.profile;
+    profile_path_button.addEventListener("click", () => QQExtension.api.openPath(QQExtension.path.profile));
 }
 
 
 async function initAbout(view) {
-    const liteloaderqqnt = view.querySelector(".about .liteloaderqqnt");
+    const qqextensionofficial = view.querySelector(".about .qqextensionofficial");
     const github = view.querySelector(".about .github");
     const group = view.querySelector(".about .group");
     const channel = view.querySelector(".about .channel");
 
-    liteloaderqqnt.addEventListener("click", () => LiteLoader.api.openExternal("https://liteloaderqqnt.github.io"));
-    github.addEventListener("click", () => LiteLoader.api.openExternal("https://github.com/LiteLoaderQQNT"));
-    group.addEventListener("click", () => LiteLoader.api.openExternal("https://t.me/LiteLoaderQQNT"));
-    channel.addEventListener("click", () => LiteLoader.api.openExternal("https://t.me/LiteLoaderQQNT_Channel"));
+    qqextensionofficial.addEventListener("click", () => QQExtension.api.openExternal("https://qqextension.github.io"));
+    github.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/QQExtensionTeam"));
+    group.addEventListener("click", () => QQExtension.api.openExternal("https://t.me/QQExtensionTeam"));
+    channel.addEventListener("click", () => QQExtension.api.openExternal("https://t.me/QQExtensionTeam_Channel"));
 
     // Hitokoto - 一言
     let visible = true;

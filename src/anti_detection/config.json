@@ -1,0 +1,37 @@
+{
+    "anti_detection": {
+        "enabled": true,
+        "log_level": "normal",
+        "features": {
+            "process_monitoring": true,
+            "memory_protection": true,
+            "dom_protection": true,
+            "network_deception": true,
+            "dynamic_features": true,
+            "file_system_protection": true
+        },
+        "security_levels": {
+            "threat_threshold_medium": 2,
+            "threat_threshold_high": 5,
+            "monitoring_interval": 5000,
+            "feature_update_interval": 1800000
+        },
+        "deception": {
+            "fake_process_count": 2,
+            "fake_file_structure": true,
+            "fake_network_traffic": true,
+            "console_output_filtering": true
+        },
+        "advanced": {
+            "code_obfuscation": true,
+            "memory_encryption": false,
+            "runtime_protection": true,
+            "anti_debug_traps": true
+        }
+    },
+    "compatibility": {
+        "plugin_adapter_mode": "safe",
+        "legacy_support": false,
+        "strict_isolation": true
+    }
+}

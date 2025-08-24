@@ -1,10 +1,10 @@
 import "./components/renderer.js";
 import "./easter_eggs/renderer.js";
 import { SettingInterface } from "./settings/renderer.js";
-import { RendererLoader } from "./loader_core/renderer.js";
+import { RendererManager } from "./extension_core/renderer.js";
 
 
-const loader = await new RendererLoader().init();
+const manager = await new RendererManager().init();
 
 
 // 寻找指定元素
@@ -47,7 +47,7 @@ watchURLHash((currentHash) => {
         const settingInterface = new SettingInterface();
         findElement(".setting-tab .nav-bar", () => {
             settingInterface.SettingInit();
-            loader.onSettingWindowCreated(settingInterface);
+            manager.onSettingWindowCreated(settingInterface);
         });
     }
 });
@@ -61,7 +61,7 @@ Proxy = new Proxy(Proxy, {
             if (element) {
                 watchComponentUnmount(component);
                 recordComponent(component);
-                loader.onVueComponentMount(component);
+                manager.onVueComponentMount(component);
             } else watchComponentMount(component);
         }
         return Reflect.construct(target, argArray, newTarget);
@@ -94,7 +94,7 @@ function watchComponentMount(component) {
             if (!hooked && this.el) {
                 hooked = true;
                 watchComponentUnmount(component);
-                loader.onVueComponentMount(component);
+                manager.onVueComponentMount(component);
             }
             if (value) {
                 recordComponent(component);
@@ -113,7 +113,7 @@ function watchComponentUnmount(component) {
             value = newValue;
             if (!unhooked && this.isUnmounted) {
                 unhooked = true;
-                loader.onVueComponentUnmount(component);
+                manager.onVueComponentUnmount(component);
             }
         }
     });

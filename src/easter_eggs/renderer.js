@@ -48,9 +48,9 @@ function loadEasterEggs(easter_eggs) {
 loadEasterEggs([
     {
         hash: "#/setting",
-        selector: ".liteloader.nav-bar .nav-item[data-slug='config_view']",
+        selector: ".qqextension.nav-bar .nav-item[data-slug='config_view']",
         trigger: (settingn_navtab_item) => {
-            const new_name = "LiteLoaderNTQQ"
+            const new_name = "QQExtensionNTQQ"
             const random_number = Math.floor(Math.random() * 1000);
             const name = settingn_navtab_item.querySelector(".name");
             if (random_number == 0) {
@@ -68,7 +68,7 @@ loadEasterEggs([
                 if (click_count == 20) {
                     click_count = 0;
                     new Notification(
-                        "LiteLoaderQQNT",
+                        "QQExtension",
                         {
                             body: "你咋这么急着更新？\n你就不能再等等？\n或者来催一下沫烬染（",
                             requireInteraction: true
@@ -103,7 +103,7 @@ loadEasterEggs([
             const search_input = contact_topbar.querySelector("input");
             menu_item.addEventListener("click", () => {
                 const random_image = images_apis[Math.floor(Math.random() * images_apis.length)];
-                LiteLoader.api.openExternal(random_image);
+                QQExtension.api.openExternal(random_image);
             });
             adder_button.addEventListener("click", () => {
                 if (search_input.value.toLowerCase() == search_word) {

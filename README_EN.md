@@ -1,52 +1,52 @@
-# LiteLoaderQQNT  
+# QQ Extension Manager  
 
 #### Lightweight · Simple · Open Source · Furry  
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub release](https://img.shields.io/github/v/release/LiteLoaderQQNT/LiteLoaderQQNT?logo=github)](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases)  [![Follow on Telegram](https://img.shields.io/badge/Follow-Telegram-blue?logo=telegram)](https://t.me/LiteLoaderQQNT_Channel)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub release](https://img.shields.io/github/v/release/QQExtensionTeam/QQExtensionManager?logo=github)](https://github.com/QQExtensionTeam/QQExtensionManager/releases)  [![Follow on Telegram](https://img.shields.io/badge/Follow-Telegram-blue?logo=telegram)](https://t.me/QQExtensionTeam_Channel)  
 
-[简体中文](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/blob/main/README.md) | **English**
+[简体中文](https://github.com/QQExtensionTeam/QQExtensionManager/blob/main/README.md) | **English**
 
-LiteLoaderQQNT is a plugin loader for QQNT, often referred to simply as LiteLoader within the QQNT environment.  
+QQ Extension Manager is a plugin manager for QQNT, often referred to simply as QQExtension within the QQNT environment.  
 It allows you to freely add various plugins to QQNT, enabling features such as theme customization, functionality enhancements, and more.  
 
-⚠ **Warning**: QQ Security Center may flag LiteLoaderQQNT as third-party software and restrict your device access, or even result in account suspension. It is recommended to use a secondary account when installing LiteLoaderQQNT (some users have already received warnings from QQ Security).  
-Please use LiteLoaderQQNT with caution.  
+⚠ **Warning**: QQ Security Center may flag QQ Extension Manager as third-party software and restrict your device access, or even result in account suspension. It is recommended to use a secondary account when installing QQ Extension Manager (some users have already received warnings from QQ Security).  
+Please use QQ Extension Manager with caution.  
 
-For more details, visit: [https://liteloaderqqnt.github.io](https://liteloaderqqnt.github.io)  
+For more details, visit: [https://qqextension.github.io](https://qqextension.github.io)  
 
 # Installation  
 
-⚠️ This documentation is written for LiteLoaderQQNT 1.2.4. Currently, it only supports Windows 64-bit and requires an unreleased `dbghelp.dll` from the Telegram channel.  
+⚠️ This documentation is written for QQ Extension Manager 1.3.0. Currently, it only supports Windows 64-bit and requires an unreleased `dbghelp.dll` from the Telegram channel.  
 
-### Download LiteLoaderQQNT  
-First, download LiteLoaderQQNT to any location. There are two methods:  
+### Download QQ Extension Manager  
+First, download QQ Extension Manager to any location. There are two methods:  
 
-- **Release (Stable Version)**: Go to the [LiteLoaderQQNT Releases page](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases), download the `LiteLoaderQQNT.zip` file, and extract it to any location.  
+- **Release (Stable Version)**: Go to the [QQ Extension Manager Releases page](https://github.com/QQExtensionTeam/QQExtensionManager/releases), download the `QQExtensionManager.zip` file, and extract it to any location.  
 
-- **Clone (Latest Commit)**: Use Git to clone the LiteLoaderQQNT repository locally.
+- **Clone (Latest Commit)**: Use Git to clone the QQ Extension Manager repository locally.
 
   ```bash
-  git clone --depth 1 https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
+  git clone --depth 1 https://github.com/QQExtensionTeam/QQExtensionManager.git
   ```  
 
 ### Bypassing QQNT File Verification on Windows  
 Download the `dbghelp_*.dll` file from the Telegram group according to your system architecture, rename it to `dbghelp.dll`, and place it in the same directory as `QQ.exe`.  
 
 ### Verifying Installation  
-After completing the installation steps, there are two ways to check if LiteLoaderQQNT was installed successfully:  
+After completing the installation steps, there are two ways to check if QQ Extension Manager was installed successfully:  
 
-- Launch QQNT, open Settings, and check if the LiteLoaderQQNT option appears in the left sidebar.  
-- Run QQNT via the terminal and check if LiteLoaderQQNT-related output is displayed.  
+- Launch QQNT, open Settings, and check if the QQ Extension Manager option appears in the left sidebar.  
+- Run QQNT via the terminal and check if QQ Extension Manager-related output is displayed.  
 
 If either condition is met, the installation was successful. Enjoy!  
 
 # Plugins  
 
 ### Standard Installation  
-You can install/uninstall plugins directly in the Settings interface. Alternatively, use community-developed plugin market plugins (e.g., [plugin-list-viewer](https://github.com/ltxhhz/LL-plugin-list-viewer)) for management.  
+You can install/uninstall plugins directly in the Settings interface. Alternatively, use community-developed plugin market plugins (e.g., [plugin-list-viewer](https://github.com/ltxhhz/QQExtension-plugin-list-viewer)) for management.  
 
 ### Manual Installation  
-Move the plugin folder to `LiteLoaderQQNT/plugins` to install it. To uninstall, delete the corresponding folder from the `plugins` directory (plugin data is stored in the `data` directory under the same name).  
+Move the plugin folder to `QQExtensionManager/plugins` to install it. To uninstall, delete the corresponding folder from the `plugins` directory (plugin data is stored in the `data` directory under the same name).  
 
 ### Finding Plugins  
 You can discover plugins through:  
@@ -54,13 +54,13 @@ You can discover plugins through:
 - Third-party plugin markets  
 - GitHub searches  
 
-An official [plugin list](https://github.com/LiteLoaderQQNT/Plugin-List/blob/v4/plugins.json) is maintained, cataloging most known plugins.  
+An official [plugin list](https://github.com/QQExtensionTeam/Plugin-List/blob/v4/plugins.json) is maintained, cataloging most known plugins.  
 
 # Development  
-Refer to the [official documentation](https://liteloaderqqnt.github.io/docs/introduction.html) for details.  
+Refer to the [official documentation](https://qqextension.github.io/docs/introduction.html) for details.  
 
 # License
-LiteLoaderQQNT is open-sourced under the MIT License.  
+QQ Extension Manager is open-sourced under the MIT License.  
 
 ```  
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  

@@ -10,7 +10,7 @@
             flex-shrink: 0;
         }
 
-        &.liteloader {
+        &.qqextension {
             & {
                 display: flex;
                 flex-flow: column;
@@ -42,7 +42,7 @@
 
 
 /* 主内容 */
-.setting-main .q-scroll-view.liteloader .tab-view {
+.setting-main .q-scroll-view.qqextension .tab-view {
     font-size: 14px;
     padding: 20px 20px 0px;
 

@@ -1,6 +1,3 @@
-const { contextBridge } = require("electron");
-
-
 function topologicalSort(dependencies) {
     const sorted = [];
     const visited = new Set();
@@ -16,26 +13,41 @@ function topologicalSort(dependencies) {
 }
 
 
-(new class {
+exports.MainManager = class {
 
-    async init() {
-        const preloadErrors = {}
+    #exports = {};
+
+    init() {
+        // 加载插件
         for (const slug of topologicalSort(Object.keys(QQExtension.plugins))) {
             const plugin = QQExtension.plugins[slug];
-            if (plugin.disabled || plugin.incompatible || plugin.error) {
+            if (plugin.disabled || plugin.incompatible) {
                 continue;
             }
-            if (plugin.path.injects.preload) {
+            if (plugin.path.injects.main) {
                 try {
-                    runPreloadScript(await (await fetch(`local:///${plugin.path.injects.preload}`)).text());
+                    this.#exports[slug] = require(plugin.path.injects.main);
                 }
                 catch (e) {
-                    preloadErrors[slug] = { message: `[Preload] ${e.message}`, stack: e.stack };
+                    plugin.error = { message: `[Main] ${e.message}`, stack: e.stack };
                 }
             }
         }
-        contextBridge.exposeInMainWorld("QQExtensionPreloadErrors", preloadErrors);
         return this;
     }
 
-}).init();
+    onBrowserWindowCreated(window) {
+        for (const slug in this.#exports) {
+            const plugin = this.#exports[slug];
+            plugin.onBrowserWindowCreated?.(window);
+        }
+    }
+
+    onLogin(uid) {
+        for (const slug in this.#exports) {
+            const plugin = this.#exports[slug];
+            plugin.onLogin?.(uid);
+        }
+    }
+
+}

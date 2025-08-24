@@ -16,7 +16,7 @@ const root_path = path.join(__dirname, "..", "..");
 const profile_path = process.env.QQ_EXTENSION_PROFILE ?? (globalThis.qwqnt ? qwqnt_path : root_path);
 const data_path = path.join(profile_path, "data");
 const plugins_path = path.join(profile_path, "plugins");
-const liteloader_package = require(path.join(root_path, "package.json"));
+const qqextension_package = require(path.join(root_path, "package.json"));
 const qqnt_package = require(path.join(process.resourcesPath, "app/package.json"))
 
 
@@ -121,7 +121,7 @@ const QQExtension = {
     },
     versions: {
         qqnt: qqnt_package.version,
-        liteloader: liteloader_package.version,
+        qqextension: qqextension_package.version,
         node: process.versions.node,
         chrome: process.versions.chrome,
         electron: process.versions.electron
@@ -130,7 +130,7 @@ const QQExtension = {
         platform: process.platform
     },
     package: {
-        liteloader: liteloader_package,
+        qqextension: qqextension_package,
         qqnt: qqnt_package
     },
     plugins: {},

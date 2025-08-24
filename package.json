@@ -1,18 +1,18 @@
 {
-    "name": "liteloader-qqnt",
+    "name": "qq-extension-manager",
     "version": "1.3.0",
-    "description": "QQNT 插件加载器 LiteLoaderQQNT —— 轻量 · 简洁 · 开源 · 福瑞",
+    "description": "QQNT 功能扩展管理器 —— 轻量 · 简洁 · 开源",
     "main": "./src/main.js",
     "private": true,
     "license": "MIT",
     "author": {
-        "name": "LiteLoaderQQNT",
-        "url": "https://github.com/LiteLoaderQQNT"
+        "name": "QQExtensionTeam",
+        "url": "https://github.com/QQExtensionTeam"
     },
-    "homepage": "https://liteloaderqqnt.github.io",
-    "bugs": "https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues",
+    "homepage": "https://qqextension.github.io",
+    "bugs": "https://github.com/QQExtensionTeam/QQExtensionManager/issues",
     "repository": {
         "type": "git",
-        "url": "https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git"
+        "url": "https://github.com/QQExtensionTeam/QQExtensionManager.git"
     }
 }

@@ -2,28 +2,28 @@ import { initView, appropriateIcon } from "./view.js";
 
 
 export class SettingInterface {
-    #liteloader_nav_bar = document.createElement("div");
-    #liteloader_setting_view = document.createElement("div");
+    #qqextension_nav_bar = document.createElement("div");
+    #qqextension_setting_view = document.createElement("div");
     #setting_view = document.querySelector(".setting-main .q-scroll-view");
     #setting_title = document.querySelector(".setting-main .setting-title");
 
     constructor() {
-        this.#liteloader_nav_bar.classList.add("nav-bar", "liteloader");
-        this.#liteloader_setting_view.classList.add("q-scroll-view", "scroll-view--show-scrollbar", "liteloader");
-        this.#liteloader_setting_view.style.display = "none";
-        document.querySelector(".setting-tab").append(this.#liteloader_nav_bar);
-        document.querySelector(".setting-main .setting-main__content").append(this.#liteloader_setting_view);
+        this.#qqextension_nav_bar.classList.add("nav-bar", "qqextension");
+        this.#qqextension_setting_view.classList.add("q-scroll-view", "scroll-view--show-scrollbar", "qqextension");
+        this.#qqextension_setting_view.style.display = "none";
+        document.querySelector(".setting-tab").append(this.#qqextension_nav_bar);
+        document.querySelector(".setting-main .setting-main__content").append(this.#qqextension_setting_view);
         document.querySelector(".setting-tab").addEventListener("click", event => {
             const nav_item = event.target.closest(".nav-item");
             if (nav_item) {
                 // 内容显示
-                if (nav_item.parentElement.classList.contains("liteloader")) {
+                if (nav_item.parentElement.classList.contains("qqextension")) {
                     this.#setting_view.style.display = "none";
-                    this.#liteloader_setting_view.style.display = "block";
+                    this.#qqextension_setting_view.style.display = "block";
                 }
                 else {
                     this.#setting_view.style.display = "block";
-                    this.#liteloader_setting_view.style.display = "none";
+                    this.#qqextension_setting_view.style.display = "none";
                 }
                 // 重新设定激活状态
                 this.#setting_title.childNodes[1].textContent = nav_item.querySelector(".name").textContent;
@@ -47,11 +47,11 @@ export class SettingInterface {
         nav_item.querySelector(".name").textContent = plugin.manifest.name;
         nav_item.addEventListener("click", event => {
             if (!event.currentTarget.classList.contains("nav-item-active")) {
-                this.#liteloader_setting_view.textContent = null;
-                this.#liteloader_setting_view.append(view);
+                this.#qqextension_setting_view.textContent = null;
+                this.#qqextension_setting_view.append(view);
             }
         });
-        this.#liteloader_nav_bar.append(nav_item);
+        this.#qqextension_nav_bar.append(nav_item);
         view.classList.add("tab-view", plugin.manifest.slug);
         return view;
     }
@@ -65,11 +65,11 @@ export class SettingInterface {
         const view = this.add({
             manifest: {
                 slug: "config_view",
-                name: "LiteLoaderQQNT",
+                name: "QQ Extension Manager",
                 thumb: "./src/settings/static/default.svg"
             },
             path: {
-                plugin: LiteLoader.path.root
+                plugin: QQExtension.path.root
             }
         });
         fetch("local://root/src/settings/static/view.html").then(async res => initView(view, await res.text()));
@@ -87,10 +87,10 @@ export class SettingInterface {
             🐞 错误信息
             <textarea readonly rows="8">${error.message}\n${error.stack}</textarea>
             🧩 插件信息
-            <textarea readonly rows="12">${JSON.stringify(LiteLoader.plugins[slug])}</textarea>
-            <textarea readonly rows="3">${JSON.stringify(Object.keys(LiteLoader.plugins))}</textarea>
+            <textarea readonly rows="12">${JSON.stringify(QQExtension.plugins[slug])}</textarea>
+            <textarea readonly rows="3">${JSON.stringify(Object.keys(QQExtension.plugins))}</textarea>
             🖥️ 环境信息
-            <textarea readonly rows="3">${JSON.stringify({ ...LiteLoader.versions, ...LiteLoader.os })}</textarea>
+            <textarea readonly rows="3">${JSON.stringify({ ...QQExtension.versions, ...QQExtension.os })}</textarea>
             <small>* 此页面仅在插件加载出现问题出现，不代表插件本身有设置页</small>`; // 没必要格式化json，方便截图
     }
 }

@@ -1,0 +1,149 @@
+{
+    "compatibility_settings": {
+        "global_whitelist": [
+            "qqextension_api",
+            "extension_core", 
+            "/plugins/",
+            "plugin.js",
+            "manifest.json",
+            "QQExtension",
+            "qq-extension-manager"
+        ],
+        "dom_protection": {
+            "enabled": true,
+            "whitelist_selectors": [
+                "qqextension",
+                "QQExtension",
+                ".qqextension",
+                "#qqextension",
+                "[data-qqextension]"
+            ],
+            "protected_selectors": [
+                "liteloader",
+                "LiteLoader",
+                ".liteloader",
+                "#liteloader", 
+                "[data-liteloader]"
+            ]
+        },
+        "network_protection": {
+            "enabled": true,
+            "allowed_urls": [
+                "qqextension",
+                "extension_core",
+                "plugin_manager",
+                "local://root/src/"
+            ],
+            "blocked_urls": [
+                "liteloader"
+            ]
+        },
+        "file_system_protection": {
+            "enabled": true,
+            "allowed_paths": [
+                "qqextension_api",
+                "extension_core",
+                "plugins",
+                "QQExtension",
+                "qq-extension-manager"
+            ],
+            "protected_paths": [
+                "liteloader_api",
+                "loader_core", 
+                "LiteLoader"
+            ]
+        }
+    },
+    "plugin_specific_settings": {
+        "plugin-list-viewer": {
+            "description": "插件列表查看器",
+            "special_permissions": [
+                "access_plugin_manifest",
+                "query_plugin_elements"
+            ],
+            "dom_exceptions": [],
+            "network_exceptions": [],
+            "notes": "需要访问插件清单信息"
+        },
+        "chronocat": {
+            "description": "QQ机器人框架",
+            "special_permissions": [
+                "access_qq_api",
+                "network_requests"
+            ],
+            "dom_exceptions": [],
+            "network_exceptions": ["bot.api", "chronocat"],
+            "notes": "机器人框架，需要网络访问权限"
+        },
+        "lite-tools": {
+            "description": "轻量工具集",
+            "special_permissions": [
+                "dom_manipulation",
+                "style_injection"
+            ],
+            "dom_exceptions": [".lite-tools", "#lite-tools"],
+            "network_exceptions": [],
+            "notes": "UI增强插件，需要DOM操作权限"
+        }
+    },
+    "migration_guidance": {
+        "api_mapping": {
+            "LiteLoader.api.config": "QQExtension.api.config",
+            "LiteLoader.api.plugin": "QQExtension.api.plugin", 
+            "LiteLoader.path": "QQExtension.path",
+            "LiteLoader.versions": "QQExtension.versions",
+            "LiteLoader.plugins": "QQExtension.plugins"
+        },
+        "deprecated_apis": [
+            "LiteLoader.api.openExternal",
+            "LiteLoader.api.openPath"
+        ],
+        "new_apis": [
+            "QQExtension.api.openExternal",
+            "QQExtension.api.openPath"
+        ],
+        "breaking_changes": [
+            {
+                "change": "全局对象重命名",
+                "old": "LiteLoader",
+                "new": "QQExtension",
+                "impact": "所有直接访问LiteLoader的代码需要更新"
+            },
+            {
+                "change": "IPC通道重命名", 
+                "old": "LiteLoader.LiteLoader.*",
+                "new": "QQExtension.QQExtension.*",
+                "impact": "自定义IPC通信需要更新"
+            }
+        ]
+    },
+    "compatibility_mode": {
+        "strict": {
+            "description": "严格模式，最大安全性",
+            "settings": {
+                "dom_protection": true,
+                "network_protection": true,
+                "file_system_protection": true,
+                "console_filtering": true
+            }
+        },
+        "balanced": {
+            "description": "平衡模式，兼容性与安全性并重",
+            "settings": {
+                "dom_protection": true,
+                "network_protection": true,
+                "file_system_protection": false,
+                "console_filtering": true
+            }
+        },
+        "permissive": {
+            "description": "宽松模式，最大兼容性",
+            "settings": {
+                "dom_protection": false,
+                "network_protection": false,
+                "file_system_protection": false,
+                "console_filtering": true
+            }
+        }
+    }
+}
