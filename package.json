@@ -6,13 +6,13 @@
     "private": true,
     "license": "MIT",
     "author": {
-        "name": "QQExtensionTeam",
-        "url": "https://github.com/QQExtensionTeam"
+        "name": "BoboTechnology",
+        "url": "https://github.com/bobotechnology"
     },
-    "homepage": "https://qqextension.github.io",
-    "bugs": "https://github.com/QQExtensionTeam/QQExtensionManager/issues",
+    "homepage": "https://github.com/bobotechnology/qq-extension-manager",
+    "bugs": "https://github.com/bobotechnology/qq-extension-manager/issues",
     "repository": {
         "type": "git",
-        "url": "https://github.com/QQExtensionTeam/QQExtensionManager.git"
+        "url": "https://github.com/bobotechnology/qq-extension-manager.git"
     }
 }

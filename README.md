@@ -1,74 +1,206 @@
 # QQ Extension Manager
 
-#### 轻量 · 简洁 · 开源 
+> QQNT 功能扩展管理器 —— 轻量 · 简洁 · 开源
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/QQExtensionTeam/QQExtensionManager?logo=github)](https://github.com/QQExtensionTeam/QQExtensionManager/releases)
-[![Follow on Telegram](https://img.shields.io/badge/Follow-Telegram-blue?logo=telegram)](https://t.me/QQExtensionTeam_Channel)
+![License](https://img.shields.io/github/license/bobotechnology/qq-extension-manager)
+![Release](https://img.shields.io/github/v/release/bobotechnology/qq-extension-manager)
+![Downloads](https://img.shields.io/github/downloads/bobotechnology/qq-extension-manager/total)
 
-**简体中文** | [English](https://github.com/QQExtensionTeam/QQExtensionManager/blob/main/README_EN.md)
+## 📖 项目简介
 
+QQ Extension Manager 是一个功能强大的 QQNT 扩展管理器，让您能够轻松安装、管理和使用各种插件来增强 QQ 的功能。
 
-QQ Extension Manager 是 QQNT 的插件管理器，一般在 QQNT 的环境内简称为 QQExtension。  
-它可以让你自由地为 QQNT 添加各种插件，实现美化主题、增加功能等各种功能。
+### ✨ 主要特性
 
+- 🔌 **插件管理**: 支持插件的安装、卸载、启用和禁用
+- 🎨 **主题支持**: 支持自定义主题和样式
+- 🛡️ **安全防护**: 内置先进的反检测系统
+- 🔄 **兼容性**: 支持现有插件的无缝迁移
+- 🌐 **开源**: 完全开源，社区驱动
 
-⚠警告：QQ 安全中心可能会将 QQ Extension Manager 当作外挂软件并下线您的设备，还有可能会导致您的 QQ 账号封号，建议使用小号安装 QQ Extension Manager（目前已有人收到 QQ 安全账号的提醒）。
-请谨慎使用 QQ Extension Manager。
+## 🚀 快速开始
 
-详情查看 QQ Extension Manager 官网：https://qqextension.github.io
+### 系统要求
 
-# 安装
-⚠️此文档为 QQ Extension Manager 1.3.0 编写。目前版本暂时仅支持 Windows 64 位，需搭配频道内未公开的 `dbghelp.dll` 方可使用。
+- Windows 10/11 (64位)
+- QQNT 9.7.8 或更高版本
+- Node.js 16+ (开发需要)
 
-### 下载 QQ Extension Manager 本体 
-你需要先下载 QQ Extension Manager 到任意位置，以下有两种方式：
+### 安装步骤
 
-- Release （稳定版）：前往 [Release](https://github.com/QQExtensionTeam/QQExtensionManager/releases) 页，下载 `QQExtensionManager.zip` 文件解压到任意位置
+1. **下载最新版本**
+   ```
+   https://github.com/bobotechnology/qq-extension-manager/releases/latest
+   ```
 
-- Clone （最新提交）：使用 Git 工具将 QQ Extension Manager 仓库 Clone 到本地任意位置
+2. **解压到QQ目录**
+   ```
+   将 qq-extension-manager 文件夹放入 QQ 安装目录
+   ```
+
+3. **替换dbghelp.dll**
+   ```
+   将提供的 dbghelp.dll 替换到 QQ 根目录
+   ```
+
+4. **重启QQ**
+   ```
+   重新启动 QQ，扩展管理器会自动激活
+   ```
+
+## 📁 项目结构
+
+```
+qq-extension-manager/
+├── src/                          # 源代码目录
+│   ├── main.js                   # 主进程入口
+│   ├── preload.js                # 预加载脚本
+│   ├── renderer.js               # 渲染进程
+│   ├── qqextension_api/          # 核心API
+│   ├── extension_core/           # 核心管理模块
+│   ├── settings/                 # 设置界面
+│   ├── anti_detection/           # 反检测系统
+│   └── protocol_scheme/          # 协议处理
+├── plugins/                      # 插件目录
+├── package.json                  # 项目配置
+└── README.md                     # 说明文档
+```
+
+## 🔧 开发指南
+
+### 环境配置
 
 ```bash
-git clone --depth 1 https://github.com/QQExtensionTeam/QQExtensionManager.git
+# 克隆仓库
+git clone https://github.com/bobotechnology/qq-extension-manager.git
+
+# 进入目录
+cd qq-extension-manager
+
+# 安装依赖
+npm install
 ```
 
-### 在 Windows 上绕过 QQNT 文件校验
-请根据你的操作系统架构在 Telegram 群内下载 `dbghelp_*.dll` 文件，将其重命名为 `dbghelp.dll` 后放入 `QQ.exe` 同级目录下。
+### API 使用
 
-### 检查是否安装成功
+```javascript
+// 获取配置
+const config = QQExtension.api.config.get('plugin-name', defaultConfig);
 
-按照上述教程完成安装后，有两种方法检查 QQ Extension Manager 是否成功安装
+// 设置配置
+QQExtension.api.config.set('plugin-name', newConfig);
 
-- 运行 QQNT 并打开设置，查看左侧列表是否出现 QQ Extension Manager 选项
+// 获取插件信息
+const plugins = QQExtension.plugins;
 
-- 使用终端运行 QQNT 查看是否有 QQ Extension Manager 相关内容输出显示
-
-如果有显示，即安装成功，玩的开心！
-
-# 插件
-
-### 正常操作
-在设置界面即可看到安装/卸载插件功能；也可以使用社区开发的插件市场类插件（例如 [plugin-list-viewer](https://github.com/ltxhhz/QQExtension-plugin-list-viewer)），在其中进行操作。
-
-### 手动操作
-将插件目录移动到 `QQExtensionManager/plugins` 文件夹内以安装，在 `plugins` 目录中删除对应目录以卸载（插件数据在 `data` 目录下对应目录）。
-
-### 寻找
-可以通过官网首页、第三方插件市场、GitHub 搜索等方式寻找插件。
-
-官方维护着一份插件列表，收录了已知的大部分插件，可在官网首页中查看详情。此外，还有一份 [json 格式的插件列表](https://github.com/QQExtensionTeam/Plugin-List/blob/v4/plugins.json)。
-
-# 开发
-详见[官方文档](https://qqextension.github.io/docs/introduction.html)。
-
-# 许可证
-QQ Extension Manager 采用 MIT 许可证进行开源。
-
+// 获取路径信息
+const paths = QQExtension.path;
 ```
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## 🔌 插件开发
+
+### 基本结构
+
+```json
+{
+  "manifest_version": 4,
+  "type": "extension",
+  "name": "示例插件",
+  "slug": "example-plugin",
+  "description": "这是一个示例插件",
+  "version": "1.0.0",
+  "author": [
+    {
+      "name": "开发者",
+      "link": "https://github.com/developer"
+    }
+  ],
+  "injects": {
+    "main": "./src/main.js",
+    "renderer": "./src/renderer.js",
+    "preload": "./src/preload.js"
+  }
+}
 ```
+
+### 插件兼容性
+
+为了确保插件与反检测系统的兼容性，请遵循以下原则：
+
+- ✅ 使用 `QQExtension` API 而不是旧的 `LiteLoader` API
+- ✅ 避免在代码中直接引用 `liteloader` 关键词
+- ✅ 使用推荐的DOM选择器模式
+- ✅ 测试插件在各种安全模式下的功能
+
+## 🛡️ 安全特性
+
+### 反检测系统
+
+QQ Extension Manager 内置了先进的反检测系统，包括：
+
+- **进程监控**: 检测并对抗分析工具
+- **内存保护**: 保护敏感数据不被扫描
+- **DOM保护**: 隐藏敏感的页面元素
+- **网络保护**: 拦截可疑的网络请求
+- **动态特征**: 每次启动生成不同的特征
+
+### 安全模式
+
+支持三种安全模式：
+
+- **严格模式**: 最大安全性，可能影响部分插件功能
+- **平衡模式**: 安全性与兼容性并重（推荐）
+- **宽松模式**: 最大兼容性，降低安全防护
+
+## 📊 兼容性检查
+
+使用内置的兼容性检测工具：
+
+```bash
+# 检查所有插件
+node src/anti_detection/compatibility_checker.js
+
+# 检查特定目录
+node src/anti_detection/compatibility_checker.js /path/to/plugins
+```
+
+## 🤝 贡献指南
+
+我们欢迎社区贡献！请遵循以下步骤：
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
+
+### 贡献类型
+
+- 🐛 Bug 修复
+- ✨ 新功能
+- 📚 文档改进
+- 🔧 性能优化
+- 🛡️ 安全增强
+
+## 📄 许可证
+
+本项目基于 [MIT License](LICENSE) 开源。
+
+## 🔗 相关链接
+
+- **项目主页**: https://github.com/bobotechnology/qq-extension-manager
+- **问题反馈**: https://github.com/bobotechnology/qq-extension-manager/issues
+- **开发文档**: https://github.com/bobotechnology/qq-extension-manager/wiki
+- **插件市场**: https://github.com/bobotechnology/qq-extension-manager/discussions
+
+## ⚠️ 免责声明
+
+本项目仅用于学习交流目的，请用户遵守相关法律法规和腾讯QQ使用条款。使用本软件可能存在账号风险，请用户自行承担相关责任。
+
+## 💖 致谢
+
+感谢所有为本项目做出贡献的开发者和社区成员！
+
+---
+
+**Made with ❤️ by BoboTechnology Team**

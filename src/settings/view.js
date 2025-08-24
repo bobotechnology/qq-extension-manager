@@ -248,13 +248,9 @@ async function initPath(view) {
 async function initAbout(view) {
     const qqextensionofficial = view.querySelector(".about .qqextensionofficial");
     const github = view.querySelector(".about .github");
-    const group = view.querySelector(".about .group");
-    const channel = view.querySelector(".about .channel");
 
-    qqextensionofficial.addEventListener("click", () => QQExtension.api.openExternal("https://qqextension.github.io"));
-    github.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/QQExtensionTeam"));
-    group.addEventListener("click", () => QQExtension.api.openExternal("https://t.me/QQExtensionTeam"));
-    channel.addEventListener("click", () => QQExtension.api.openExternal("https://t.me/QQExtensionTeam_Channel"));
+    qqextensionofficial.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/bobotechnology/qq-extension-manager"));
+    github.addEventListener("click", () => QQExtension.api.openExternal("https://github.com/bobotechnology"));
 
     // Hitokoto - 一言
     let visible = true;

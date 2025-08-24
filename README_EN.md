@@ -2,9 +2,9 @@
 
 #### Lightweight · Simple · Open Source · Furry  
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub release](https://img.shields.io/github/v/release/QQExtensionTeam/QQExtensionManager?logo=github)](https://github.com/QQExtensionTeam/QQExtensionManager/releases)  [![Follow on Telegram](https://img.shields.io/badge/Follow-Telegram-blue?logo=telegram)](https://t.me/QQExtensionTeam_Channel)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![GitHub release](https://img.shields.io/github/v/release/bobotechnology/qq-extension-manager?logo=github)](https://github.com/bobotechnology/qq-extension-manager/releases)  
 
-[简体中文](https://github.com/QQExtensionTeam/QQExtensionManager/blob/main/README.md) | **English**
+[简体中文](https://github.com/bobotechnology/qq-extension-manager/blob/main/README.md) | **English**
 
 QQ Extension Manager is a plugin manager for QQNT, often referred to simply as QQExtension within the QQNT environment.  
 It allows you to freely add various plugins to QQNT, enabling features such as theme customization, functionality enhancements, and more.  
@@ -12,7 +12,7 @@ It allows you to freely add various plugins to QQNT, enabling features such as t
 ⚠ **Warning**: QQ Security Center may flag QQ Extension Manager as third-party software and restrict your device access, or even result in account suspension. It is recommended to use a secondary account when installing QQ Extension Manager (some users have already received warnings from QQ Security).  
 Please use QQ Extension Manager with caution.  
 
-For more details, visit: [https://qqextension.github.io](https://qqextension.github.io)  
+For more details, visit: [https://github.com/bobotechnology/qq-extension-manager](https://github.com/bobotechnology/qq-extension-manager)  
 
 # Installation  
 
@@ -21,12 +21,12 @@ For more details, visit: [https://qqextension.github.io](https://qqextension.git
 ### Download QQ Extension Manager  
 First, download QQ Extension Manager to any location. There are two methods:  
 
-- **Release (Stable Version)**: Go to the [QQ Extension Manager Releases page](https://github.com/QQExtensionTeam/QQExtensionManager/releases), download the `QQExtensionManager.zip` file, and extract it to any location.  
+- **Release (Stable Version)**: Go to the [QQ Extension Manager Releases page](https://github.com/bobotechnology/qq-extension-manager/releases), download the `qq-extension-manager.zip` file, and extract it to any location.  
 
 - **Clone (Latest Commit)**: Use Git to clone the QQ Extension Manager repository locally.
 
   ```bash
-  git clone --depth 1 https://github.com/QQExtensionTeam/QQExtensionManager.git
+  git clone --depth 1 https://github.com/bobotechnology/qq-extension-manager.git
   ```  
 
 ### Bypassing QQNT File Verification on Windows  
@@ -43,7 +43,7 @@ If either condition is met, the installation was successful. Enjoy!
 # Plugins  
 
 ### Standard Installation  
-You can install/uninstall plugins directly in the Settings interface. Alternatively, use community-developed plugin market plugins (e.g., [plugin-list-viewer](https://github.com/ltxhhz/QQExtension-plugin-list-viewer)) for management.  
+You can install/uninstall plugins directly in the Settings interface. Alternatively, use community-developed plugin market plugins for management.  
 
 ### Manual Installation  
 Move the plugin folder to `QQExtensionManager/plugins` to install it. To uninstall, delete the corresponding folder from the `plugins` directory (plugin data is stored in the `data` directory under the same name).  
@@ -54,10 +54,10 @@ You can discover plugins through:
 - Third-party plugin markets  
 - GitHub searches  
 
-An official [plugin list](https://github.com/QQExtensionTeam/Plugin-List/blob/v4/plugins.json) is maintained, cataloging most known plugins.  
+An official [plugin list](https://github.com/bobotechnology/qq-extension-manager/discussions) is maintained, cataloging most known plugins.  
 
 # Development  
-Refer to the [official documentation](https://qqextension.github.io/docs/introduction.html) for details.  
+Refer to the [official documentation](https://github.com/bobotechnology/qq-extension-manager/wiki) for details.  
 
 # License
 QQ Extension Manager is open-sourced under the MIT License.  
