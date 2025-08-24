@@ -41,9 +41,6 @@ class AntiDetectionSystem {
         
         // 初始化插件白名单
         this.initializePluginWhitelist();
-        
-        // 添加错误处理
-        this.setupErrorHandling();
     }
 
     // 初始化插件白名单
